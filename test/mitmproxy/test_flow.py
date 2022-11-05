@@ -147,7 +147,7 @@ class TestFlowMaster:
 
 class TestError:
     def test_getset_state(self):
-        e = flow.Error("Error", flow.ErrorEnum.INTERRUPTED_CONNECTION)
+        e = flow.Error("Error", flow.ErrorCodes.CONNECTION_KILLED)
         state = e.get_state()
         assert flow.Error.from_state(state).get_state() == e.get_state()
 
@@ -162,6 +162,6 @@ class TestError:
         assert e3.get_state() == e.get_state()
 
     def test_repr(self):
-        e = flow.Error("yay", flow.ErrorEnum.INTERRUPTED_CONNECTION)
+        e = flow.Error("yay", flow.ErrorCodes.CONNECTION_KILLED)
         assert repr(e)
         assert str(e)

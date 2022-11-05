@@ -724,7 +724,7 @@ class TestHTTPFlow:
         assert f.killable
         f.kill()
         assert not f.killable
-        assert f.error.msg == flow.Error.KILLED_MESSAGE
+        assert f.error.msg == flow.ErrorCodes.KILLED_MESSAGE
 
     def test_intercept(self):
         f = tflow()

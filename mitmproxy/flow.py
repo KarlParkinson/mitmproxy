@@ -11,7 +11,9 @@ from mitmproxy import version
 
 
 class ErrorCodes(enum.Enum):
-    INTERRUPTED_CONNECTION = 1
+    KILLED_MESSAGE: ClassVar[str] = "Connection killed."
+
+    CONNECTION_KILLED = 1
     TIMEOUT = 2
     PROTOCOL_ERROR = 3
 
@@ -35,9 +37,8 @@ class Error(stateobject.StateObject):
     timestamp: float
     """Unix timestamp of when this error happened."""
 
-    KILLED_MESSAGE: ClassVar[str] = "Connection killed."
 
-    def __init__(self, msg: str, code: Optional[int] = ErrorEnum.INTERRUPTED_CONNECTION, timestamp: Optional[float] = None) -> None:
+    def __init__(self, msg: str, code: Optional[int] = ErrorCodes.CONNECTION_KILLED, timestamp: Optional[float] = None) -> None:
         """Create an error. If no timestamp is passed, the current time is used."""
         self.msg = msg
         self.timestamp = timestamp or time.time()
@@ -228,7 +229,7 @@ class Flow(stateobject.StateObject):
     @property
     def killable(self):
         """*Read-only:* `True` if this flow can be killed, `False` otherwise."""
-        return self.live and not (self.error and self.error.msg == Error.KILLED_MESSAGE)
+        return self.live and not (self.error and self.error.msg == ErrorCodes.KILLED_MESSAGE)
 
     def kill(self):
         """
@@ -240,7 +241,7 @@ class Flow(stateobject.StateObject):
         #  flows in transit (https://github.com/mitmproxy/mitmproxy/issues/4711), even though they are advertised
         #  as killable. An alternative approach would be to introduce a `KillInjected` event similar to
         #  `MessageInjected`, which should fix this issue.
-        self.error = Error(Error.KILLED_MESSAGE)
+        self.error = Error(ErrorCodes.KILLED_MESSAGE)
         self.intercepted = False
         self.live = False
 

@@ -35,4 +35,4 @@ class TestDisableH2CleartextUpgrade:
 
             a.request(f)
             assert not f.killable
-            assert f.error.msg == flow.Error.KILLED_MESSAGE
+            assert f.error.msg == flow.ErrorCodes.KILLED_MESSAGE
